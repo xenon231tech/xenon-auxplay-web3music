@@ -19,7 +19,6 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
-        /* Scrollbar Styling */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -38,12 +37,10 @@
             background: rgba(79, 172, 254, 0.8);
         }
 
-        /* Smooth transitions */
         .smooth-transition {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Glow effect for buttons */
         .btn-glow {
             position: relative;
             overflow: hidden;
@@ -64,7 +61,6 @@
             left: 100%;
         }
 
-        /* Song row hover effect */
         .song-row {
             border-left: 3px solid transparent;
             transition: all 0.3s ease;
@@ -76,14 +72,12 @@
             transform: translateX(4px);
         }
 
-        /* Analytics card glow */
         .analytics-card {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.8));
             border: 1px solid rgba(79, 172, 254, 0.2);
             backdrop-filter: blur(10px);
         }
 
-        /* Player bar animation */
         @keyframes pulse-play {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -93,7 +87,6 @@
             animation: pulse-play 0.6s ease-in-out infinite;
         }
 
-        /* Gradient text */
         .gradient-text {
             background: linear-gradient(135deg, #60a5fa, #34d399);
             -webkit-background-clip: text;
@@ -101,12 +94,38 @@
             background-clip: text;
         }
 
-        /* Active player styling */
         .player-active {
             box-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
         }
 
-        /* Responsive grid */
+        .creator-card {
+            transition: all 0.3s ease;
+        }
+
+        .creator-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(96, 165, 250, 0.2);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .toast {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .modal {
+            animation: slideIn 0.3s ease-out;
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 display: none;
@@ -124,7 +143,6 @@
     <header class="bg-slate-900 bg-opacity-95 border-b border-slate-700 sticky top-0 z-40 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex items-center justify-between">
-                <!-- Logo -->
                 <div class="flex items-center space-x-3 cursor-pointer">
                     <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-lg flex items-center justify-center">
                         <i class="fas fa-music text-slate-900 font-bold text-lg"></i>
@@ -135,22 +153,48 @@
                     </div>
                 </div>
 
-                <!-- Connect Wallet Button -->
-                <button class="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-slate-900 font-bold py-2 px-6 rounded-lg smooth-transition btn-glow flex items-center space-x-2 active:scale-95">
-                    <i class="fas fa-wallet"></i>
-                    <span>Connect Wallet</span>
-                </button>
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleSearch()" class="text-slate-300 hover:text-white p-2 rounded-lg hover:bg-slate-700 smooth-transition">
+                        <i class="fas fa-search text-lg"></i>
+                    </button>
+                    <button class="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-slate-900 font-bold py-2 px-6 rounded-lg smooth-transition btn-glow flex items-center space-x-2 active:scale-95">
+                        <i class="fas fa-wallet"></i>
+                        <span class="hidden sm:inline">Connect Wallet</span>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
 
+    <!-- Search Modal -->
+    <div id="searchModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-end sm:items-center justify-center">
+        <div class="modal bg-slate-800 w-full sm:w-96 rounded-t-2xl sm:rounded-2xl p-6 border border-slate-700">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-white">Search Songs & Artists</h3>
+                <button onclick="toggleSearch()" class="text-slate-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <input type="text" placeholder="Search..." class="w-full bg-slate-700 text-white rounded-lg px-4 py-3 border border-slate-600 focus:border-blue-500 focus:outline-none smooth-transition">
+            <div class="mt-4 space-y-2 max-h-64 overflow-y-auto">
+                <div class="p-3 bg-slate-700 rounded-lg cursor-pointer hover:bg-slate-600 smooth-transition">
+                    <p class="text-white font-semibold">Electric Dreams</p>
+                    <p class="text-xs text-slate-400">by Luna Echo</p>
+                </div>
+                <div class="p-3 bg-slate-700 rounded-lg cursor-pointer hover:bg-slate-600 smooth-transition">
+                    <p class="text-white font-semibold">Synthwave Sunset</p>
+                    <p class="text-xs text-slate-400">by Alex Nova</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="flex flex-col lg:flex-row">
-        <!-- Sidebar Analytics (Hidden on Mobile) -->
+        <!-- Sidebar Analytics -->
         <aside class="hidden lg:block w-80 bg-slate-800 bg-opacity-50 border-r border-slate-700 p-6 space-y-6 h-screen overflow-y-auto sticky top-16">
             <div>
                 <h2 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Your Analytics</h2>
                 
-                <!-- Total AUX Earned -->
                 <div class="analytics-card p-4 rounded-lg mb-4">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-slate-300 text-sm">Total $AUX Earned</span>
@@ -160,7 +204,6 @@
                     <p class="text-xs text-slate-400 mt-2">↑ 12% this month</p>
                 </div>
 
-                <!-- Total Streams -->
                 <div class="analytics-card p-4 rounded-lg mb-4">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-slate-300 text-sm">Total Streams</span>
@@ -170,7 +213,6 @@
                     <p class="text-xs text-slate-400 mt-2">↑ 28% from last week</p>
                 </div>
 
-                <!-- Wallet Balance -->
                 <div class="analytics-card p-4 rounded-lg">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-slate-300 text-sm">Wallet Balance</span>
@@ -215,17 +257,12 @@
                         <p class="text-slate-400">Discover and support amazing creators</p>
                     </div>
 
-                    <!-- Songs List -->
                     <div class="space-y-3">
-                        <!-- Song Item 1 -->
                         <div class="song-row bg-slate-800 bg-opacity-40 hover:bg-opacity-60 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 cursor-pointer">
                             <div class="flex items-center gap-4 w-full sm:flex-1">
-                                <!-- Album Cover -->
                                 <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex-shrink-0 flex items-center justify-center shadow-lg">
                                     <i class="fas fa-music text-white text-2xl"></i>
                                 </div>
-
-                                <!-- Song Info -->
                                 <div class="flex-1 min-w-0">
                                     <h4 class="text-white font-bold truncate">Electric Dreams</h4>
                                     <p class="text-sm text-slate-400 truncate">by Luna Echo</p>
@@ -235,21 +272,18 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Action Buttons -->
                             <div class="flex gap-2 w-full sm:w-auto">
-                                <button class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold playing-animation">
+                                <button onclick="playMusic(this)" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold playing-animation">
                                     <i class="fas fa-play"></i>
                                     <span>Play</span>
                                 </button>
-                                <button class="flex-1 sm:flex-none bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                <button onclick="openTipModal('Luna Echo')" class="flex-1 sm:flex-none bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
                                     <i class="fas fa-heart"></i>
                                     <span>Tip</span>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Song Item 2 -->
                         <div class="song-row bg-slate-800 bg-opacity-40 hover:bg-opacity-60 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 cursor-pointer">
                             <div class="flex items-center gap-4 w-full sm:flex-1">
                                 <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-lg flex-shrink-0 flex items-center justify-center shadow-lg">
@@ -265,18 +299,17 @@
                                 </div>
                             </div>
                             <div class="flex gap-2 w-full sm:w-auto">
-                                <button class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                <button onclick="playMusic(this)" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
                                     <i class="fas fa-play"></i>
                                     <span>Play</span>
                                 </button>
-                                <button class="flex-1 sm:flex-none bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                <button onclick="openTipModal('Alex Nova')" class="flex-1 sm:flex-none bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
                                     <i class="fas fa-heart"></i>
                                     <span>Tip</span>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Song Item 3 -->
                         <div class="song-row bg-slate-800 bg-opacity-40 hover:bg-opacity-60 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 cursor-pointer">
                             <div class="flex items-center gap-4 w-full sm:flex-1">
                                 <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex-shrink-0 flex items-center justify-center shadow-lg">
@@ -292,18 +325,17 @@
                                 </div>
                             </div>
                             <div class="flex gap-2 w-full sm:w-auto">
-                                <button class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                <button onclick="playMusic(this)" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
                                     <i class="fas fa-play"></i>
                                     <span>Play</span>
                                 </button>
-                                <button class="flex-1 sm:flex-none bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                <button onclick="openTipModal('Stellar Beats')" class="flex-1 sm:flex-none bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
                                     <i class="fas fa-heart"></i>
                                     <span>Tip</span>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Song Item 4 -->
                         <div class="song-row bg-slate-800 bg-opacity-40 hover:bg-opacity-60 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 cursor-pointer">
                             <div class="flex items-center gap-4 w-full sm:flex-1">
                                 <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex-shrink-0 flex items-center justify-center shadow-lg">
@@ -319,18 +351,17 @@
                                 </div>
                             </div>
                             <div class="flex gap-2 w-full sm:w-auto">
-                                <button class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                <button onclick="playMusic(this)" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
                                     <i class="fas fa-play"></i>
                                     <span>Play</span>
                                 </button>
-                                <button class="flex-1 sm:flex-none bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                <button onclick="openTipModal('DJ Phoenix')" class="flex-1 sm:flex-none bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
                                     <i class="fas fa-heart"></i>
                                     <span>Tip</span>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Song Item 5 -->
                         <div class="song-row bg-slate-800 bg-opacity-40 hover:bg-opacity-60 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 cursor-pointer">
                             <div class="flex items-center gap-4 w-full sm:flex-1">
                                 <div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex-shrink-0 flex items-center justify-center shadow-lg">
@@ -346,11 +377,11 @@
                                 </div>
                             </div>
                             <div class="flex gap-2 w-full sm:w-auto">
-                                <button class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                <button onclick="playMusic(this)" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
                                     <i class="fas fa-play"></i>
                                     <span>Play</span>
                                 </button>
-                                <button class="flex-1 sm:flex-none bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                <button onclick="openTipModal('Cyber Sonic')" class="flex-1 sm:flex-none bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
                                     <i class="fas fa-heart"></i>
                                     <span>Tip</span>
                                 </button>
@@ -359,13 +390,198 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Top Creators Section -->
+            <section class="px-4 sm:px-6 lg:px-8 py-12">
+                <div class="max-w-5xl mx-auto">
+                    <div class="mb-8">
+                        <h3 class="text-2xl md:text-3xl font-bold text-white mb-2">🌟 Top Creators</h3>
+                        <p class="text-slate-400">Support the best artists on Auxplay</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="creator-card bg-slate-800 bg-opacity-40 border border-slate-700 rounded-lg p-6 text-center">
+                            <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-white text-3xl"></i>
+                            </div>
+                            <h4 class="text-white font-bold text-lg mb-1">Luna Echo</h4>
+                            <p class="text-slate-400 text-sm mb-3">Electronic Music Producer</p>
+                            <div class="flex justify-center gap-4 text-sm mb-4">
+                                <div>
+                                    <p class="text-blue-400 font-bold">2.4K</p>
+                                    <p class="text-slate-500">Followers</p>
+                                </div>
+                                <div>
+                                    <p class="text-cyan-400 font-bold">834</p>
+                                    <p class="text-slate-500">Streams</p>
+                                </div>
+                            </div>
+                            <button onclick="showToast('Following Luna Echo!')" class="w-full bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-slate-900 font-bold py-2 px-4 rounded-lg smooth-transition">
+                                Follow
+                            </button>
+                        </div>
+
+                        <div class="creator-card bg-slate-800 bg-opacity-40 border border-slate-700 rounded-lg p-6 text-center">
+                            <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-white text-3xl"></i>
+                            </div>
+                            <h4 class="text-white font-bold text-lg mb-1">Alex Nova</h4>
+                            <p class="text-slate-400 text-sm mb-3">Synthwave Artist</p>
+                            <div class="flex justify-center gap-4 text-sm mb-4">
+                                <div>
+                                    <p class="text-blue-400 font-bold">3.1K</p>
+                                    <p class="text-slate-500">Followers</p>
+                                </div>
+                                <div>
+                                    <p class="text-cyan-400 font-bold">1.2K</p>
+                                    <p class="text-slate-500">Streams</p>
+                                </div>
+                            </div>
+                            <button onclick="showToast('Following Alex Nova!')" class="w-full bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-slate-900 font-bold py-2 px-4 rounded-lg smooth-transition">
+                                Follow
+                            </button>
+                        </div>
+
+                        <div class="creator-card bg-slate-800 bg-opacity-40 border border-slate-700 rounded-lg p-6 text-center">
+                            <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-white text-3xl"></i>
+                            </div>
+                            <h4 class="text-white font-bold text-lg mb-1">Stellar Beats</h4>
+                            <p class="text-slate-400 text-sm mb-3">Ambient Music Master</p>
+                            <div class="flex justify-center gap-4 text-sm mb-4">
+                                <div>
+                                    <p class="text-blue-400 font-bold">1.8K</p>
+                                    <p class="text-slate-500">Followers</p>
+                                </div>
+                                <div>
+                                    <p class="text-cyan-400 font-bold">642</p>
+                                    <p class="text-slate-500">Streams</p>
+                                </div>
+                            </div>
+                            <button onclick="showToast('Following Stellar Beats!')" class="w-full bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-slate-900 font-bold py-2 px-4 rounded-lg smooth-transition">
+                                Follow
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trending Playlists Section -->
+            <section class="px-4 sm:px-6 lg:px-8 py-12">
+                <div class="max-w-5xl mx-auto">
+                    <div class="mb-8">
+                        <h3 class="text-2xl md:text-3xl font-bold text-white mb-2">🎸 Trending Playlists</h3>
+                        <p class="text-slate-400">Curated collections to discover new music</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg p-6 cursor-pointer hover:shadow-lg smooth-transition">
+                            <i class="fas fa-list text-4xl text-white mb-4 opacity-50"></i>
+                            <h4 class="text-white font-bold mb-2">Vibe Check</h4>
+                            <p class="text-sm text-purple-100 mb-4">45 songs • Electronic</p>
+                            <button onclick="showToast('Added Vibe Check to queue!')" class="text-sm bg-white bg-opacity-20 hover:bg-opacity-30 text-white py-1 px-3 rounded smooth-transition">
+                                + Add
+                            </button>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-lg p-6 cursor-pointer hover:shadow-lg smooth-transition">
+                            <i class="fas fa-list text-4xl text-white mb-4 opacity-50"></i>
+                            <h4 class="text-white font-bold mb-2">Chill Beats</h4>
+                            <p class="text-sm text-blue-100 mb-4">32 songs • Ambient</p>
+                            <button onclick="showToast('Added Chill Beats to queue!')" class="text-sm bg-white bg-opacity-20 hover:bg-opacity-30 text-white py-1 px-3 rounded smooth-transition">
+                                + Add
+                            </button>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-orange-600 to-red-600 rounded-lg p-6 cursor-pointer hover:shadow-lg smooth-transition">
+                            <i class="fas fa-list text-4xl text-white mb-4 opacity-50"></i>
+                            <h4 class="text-white font-bold mb-2">Gym Sessions</h4>
+                            <p class="text-sm text-orange-100 mb-4">58 songs • Energy</p>
+                            <button onclick="showToast('Added Gym Sessions to queue!')" class="text-sm bg-white bg-opacity-20 hover:bg-opacity-30 text-white py-1 px-3 rounded smooth-transition">
+                                + Add
+                            </button>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg p-6 cursor-pointer hover:shadow-lg smooth-transition">
+                            <i class="fas fa-list text-4xl text-white mb-4 opacity-50"></i>
+                            <h4 class="text-white font-bold mb-2">Nightlife Mix</h4>
+                            <p class="text-sm text-indigo-100 mb-4">67 songs • Dance</p>
+                            <button onclick="showToast('Added Nightlife Mix to queue!')" class="text-sm bg-white bg-opacity-20 hover:bg-opacity-30 text-white py-1 px-3 rounded smooth-transition">
+                                + Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- How It Works Section -->
+            <section class="px-4 sm:px-6 lg:px-8 py-12">
+                <div class="max-w-4xl mx-auto">
+                    <div class="mb-8 text-center">
+                        <h3 class="text-2xl md:text-3xl font-bold text-white mb-2">💡 How Auxplay Works</h3>
+                        <p class="text-slate-400">The future of music streaming is here</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-slate-800 bg-opacity-40 border border-slate-700 rounded-lg p-6">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fas fa-play text-white text-xl"></i>
+                            </div>
+                            <h4 class="text-white font-bold mb-2">Listen & Stream</h4>
+                            <p class="text-slate-400 text-sm">Play your favorite tracks from amazing creators. Every stream directly rewards the artist.</p>
+                        </div>
+
+                        <div class="bg-slate-800 bg-opacity-40 border border-slate-700 rounded-lg p-6">
+                            <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-red-400 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fas fa-gift text-white text-xl"></i>
+                            </div>
+                            <h4 class="text-white font-bold mb-2">Support & Donate</h4>
+                            <p class="text-slate-400 text-sm">Tip your favorite creators directly with $AUX tokens. Show them love & support.</p>
+                        </div>
+
+                        <div class="bg-slate-800 bg-opacity-40 border border-slate-700 rounded-lg p-6">
+                            <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-400 rounded-lg flex items-center justify-center mb-4">
+                                <i class="fas fa-coins text-white text-xl"></i>
+                            </div>
+                            <h4 class="text-white font-bold mb-2">Earn & Withdraw</h4>
+                            <p class="text-slate-400 text-sm">Creators earn $AUX tokens instantly. Withdraw to your wallet anytime, on Base chain.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
+    <!-- Tip Modal -->
+    <div id="tipModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-end sm:items-center justify-center">
+        <div class="modal bg-slate-800 w-full sm:w-96 rounded-t-2xl sm:rounded-2xl p-6 border border-slate-700">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-white">Send a Tip</h3>
+                <button onclick="closeTipModal()" class="text-slate-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <p id="tipArtist" class="text-slate-300 mb-6">Supporting: Artist Name</p>
+            <div class="space-y-3 mb-6">
+                <button onclick="sendTip(10, this)" class="w-full bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-lg smooth-transition font-semibold">10 $AUX</button>
+                <button onclick="sendTip(25, this)" class="w-full bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-lg smooth-transition font-semibold">25 $AUX</button>
+                <button onclick="sendTip(50, this)" class="w-full bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-lg smooth-transition font-semibold">50 $AUX</button>
+                <button onclick="sendTip(100, this)" class="w-full bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-slate-900 py-3 rounded-lg smooth-transition font-semibold">100 $AUX</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-32 left-4 right-4 sm:bottom-8 sm:left-8 sm:right-auto sm:w-80 bg-gradient-to-r from-blue-500 to-cyan-400 text-slate-900 p-4 rounded-lg shadow-lg hidden z-40 toast font-semibold">
+        <div class="flex items-center gap-3">
+            <i class="fas fa-check-circle text-lg"></i>
+            <span id="toastText">Success!</span>
+        </div>
+    </div>
+
     <!-- Bottom Audio Player Bar -->
-    <div id="player" class="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-slate-900 via-slate-800 to-slate-800 border-t border-slate-700 backdrop-blur-lg p-4 hidden player-active" style="display: none;">
+    <div id="player" class="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-slate-900 via-slate-800 to-slate-800 border-t border-slate-700 backdrop-blur-lg p-4 hidden player-active">
         <div class="max-w-7xl mx-auto">
-            <!-- Now Playing Info (Responsive) -->
             <div class="flex items-center gap-3 mb-3">
                 <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex-shrink-0 flex items-center justify-center hidden sm:flex">
                     <i class="fas fa-music text-white text-xl"></i>
@@ -376,7 +592,6 @@
                 </div>
             </div>
 
-            <!-- Progress Bar -->
             <div class="mb-3">
                 <input type="range" min="0" max="100" value="35" class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500">
                 <div class="flex justify-between text-xs text-slate-400 mt-1">
@@ -385,7 +600,6 @@
                 </div>
             </div>
 
-            <!-- Player Controls -->
             <div class="flex items-center justify-center gap-4">
                 <button class="text-slate-400 hover:text-slate-200 smooth-transition">
                     <i class="fas fa-shuffle text-lg"></i>
@@ -407,65 +621,63 @@
         </div>
     </div>
 
-    <!-- Mobile Analytics Footer (Visible only on small screens) -->
-    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 p-4 pointer-events-none">
-        <div class="h-24"></div>
-    </div>
-
-    <!-- Footer Spacer for Player Bar -->
     <div class="h-32"></div>
 
     <script>
-        // Simple player functionality
-        document.querySelectorAll('.playing-animation').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const player = document.getElementById('player');
-                player.style.display = 'block';
-                
-                // Update now playing info
-                const songRow = this.closest('.song-row');
-                const title = songRow.querySelector('h4').textContent;
-                const artist = songRow.querySelector('.text-slate-400:nth-of-type(1)').textContent;
-                
-                document.querySelector('#player .text-white.font-bold').textContent = title;
-                document.querySelector('#player .text-slate-400:nth-of-type(1)').textContent = artist;
-                
-                // Change button state
-                this.classList.remove('playing-animation');
-                this.innerHTML = '<i class="fas fa-pause"></i><span>Pause</span>';
-            });
-        });
+        function toggleSearch() {
+            const modal = document.getElementById('searchModal');
+            modal.classList.toggle('hidden');
+        }
 
-        // Play button functionality for other songs
-        document.querySelectorAll('button:has(i.fa-play)').forEach((button, index) => {
-            if (index > 0) {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const player = document.getElementById('player');
-                    player.style.display = 'block';
-                    
-                    const songRow = this.closest('.song-row');
-                    const title = songRow.querySelector('h4').textContent;
-                    const artist = songRow.querySelector('.text-slate-400:nth-of-type(1)').textContent;
-                    
-                    document.querySelector('#player .text-white.font-bold').textContent = title;
-                    document.querySelector('#player .text-slate-400:nth-of-type(1)').textContent = artist;
-                    
-                    this.classList.add('bg-opacity-80');
-                    this.innerHTML = '<i class="fas fa-pause"></i><span>Pause</span>';
-                });
+        function openTipModal(artist) {
+            document.getElementById('tipModal').classList.remove('hidden');
+            document.getElementById('tipArtist').textContent = `Supporting: ${artist}`;
+        }
+
+        function closeTipModal() {
+            document.getElementById('tipModal').classList.add('hidden');
+        }
+
+        function sendTip(amount, button) {
+            const artist = document.getElementById('tipArtist').textContent.replace('Supporting: ', '');
+            showToast(`✨ Sent ${amount} $AUX to ${artist}!`);
+            closeTipModal();
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => button.style.transform = 'scale(1)', 100);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toastText');
+            toastText.textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+
+        function playMusic(button) {
+            const player = document.getElementById('player');
+            const songRow = button.closest('.song-row');
+            const title = songRow.querySelector('h4').textContent;
+            const artist = songRow.querySelector('.text-slate-400').textContent.replace('by ', '');
+            
+            player.style.display = 'block';
+            document.querySelector('#player .text-white.font-bold').textContent = title;
+            document.querySelector('#player .text-slate-400').textContent = `by ${artist}`;
+            
+            button.innerHTML = '<i class="fas fa-pause"></i><span>Pause</span>';
+            showToast(`🎵 Now playing: ${title}`);
+        }
+
+        document.getElementById('searchModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('searchModal')) {
+                toggleSearch();
             }
         });
 
-        // Tip/Donate button functionality
-        document.querySelectorAll('button:has(i.fa-heart)').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const songRow = this.closest('.song-row');
-                const artist = songRow.querySelector('.text-slate-400:nth-of-type(1)').textContent;
-                alert(`Opening donation modal for ${artist}...\n\nIn a real app, this would open a Web3 donation interface!`);
-            });
+        document.getElementById('tipModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('tipModal')) {
+                closeTipModal();
+            }
         });
     </script>
 </body>
