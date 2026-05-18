@@ -1,0 +1,30 @@
+{
+  "networks": {
+    "base": {
+      "chainId": 8453,
+      "name": "Base",
+      "rpcUrl": "https://mainnet.base.org",
+      "explorerUrl": "https://basescan.org",
+      "currency": "ETH",
+      "contracts": {
+        "auxToken": "0x...",
+        "streaming": "0x...",
+        "creatorRegistry": "0x..."
+      }
+    },
+    "base-sepolia": {
+      "chainId": 84532,
+      "name": "Base Sepolia",
+      "rpcUrl": "https://sepolia.base.org",
+      "explorerUrl": "https://sepolia-explorer.base.org",
+      "currency": "ETH",
+      "contracts": {
+        "auxToken": "0x...",
+        "streaming": "0x...",
+        "creatorRegistry": "0x..."
+      }
+    }
+  },
+  "defaultNetwork": "base",
+  "supportedNetworks": ["base", "base-sepolia"]
+}
