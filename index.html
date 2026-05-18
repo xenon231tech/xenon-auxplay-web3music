@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auxplay - The Decentralized Audio Hub on Base</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 100%);
+            color: #e2e8f0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(79, 172, 254, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(79, 172, 254, 0.8);
+        }
+
+        /* Smooth transitions */
+        .smooth-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Glow effect for buttons */
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-glow::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-glow:hover::before {
+            left: 100%;
+        }
+
+        /* Song row hover effect */
+        .song-row {
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .song-row:hover {
+            border-left-color: #60a5fa;
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateX(4px);
+        }
+
+        /* Analytics card glow */
+        .analytics-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.8));
+            border: 1px solid rgba(79, 172, 254, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Player bar animation */
+        @keyframes pulse-play {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .playing-animation {
+            animation: pulse-play 0.6s ease-in-out infinite;
+        }
+
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Active player styling */
+        .player-active {
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+        }
+
+        /* Responsive grid */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+
+    <!-- Header -->
+    <header class="bg-slate-900 bg-opacity-95 border-b border-slate-700 sticky top-0 z-40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-music text-slate-900 font-bold text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold gradient-text">Auxplay</h1>
+                        <p class="text-xs text-slate-400">Decentralized Audio Hub</p>
+                    </div>
+                </div>
+
+                <!-- Connect Wallet Button -->
+                <button class="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-slate-900 font-bold py-2 px-6 rounded-lg smooth-transition btn-glow flex items-center space-x-2 active:scale-95">
+                    <i class="fas fa-wallet"></i>
+                    <span>Connect Wallet</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex flex-col lg:flex-row">
+        <!-- Sidebar Analytics (Hidden on Mobile) -->
+        <aside class="hidden lg:block w-80 bg-slate-800 bg-opacity-50 border-r border-slate-700 p-6 space-y-6 h-screen overflow-y-auto sticky top-16">
+            <div>
+                <h2 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Your Analytics</h2>
+                
+                <!-- Total AUX Earned -->
+                <div class="analytics-card p-4 rounded-lg mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-slate-300 text-sm">Total $AUX Earned</span>
+                        <i class="fas fa-coins text-yellow-400"></i>
+                    </div>
+                    <p class="text-3xl font-bold gradient-text">1,245.50</p>
+                    <p class="text-xs text-slate-400 mt-2">↑ 12% this month</p>
+                </div>
+
+                <!-- Total Streams -->
+                <div class="analytics-card p-4 rounded-lg mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-slate-300 text-sm">Total Streams</span>
+                        <i class="fas fa-play text-blue-400"></i>
+                    </div>
+                    <p class="text-3xl font-bold gradient-text">12,847</p>
+                    <p class="text-xs text-slate-400 mt-2">↑ 28% from last week</p>
+                </div>
+
+                <!-- Wallet Balance -->
+                <div class="analytics-card p-4 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-slate-300 text-sm">Wallet Balance</span>
+                        <i class="fas fa-piggy-bank text-emerald-400"></i>
+                    </div>
+                    <p class="text-3xl font-bold gradient-text">$3,847.92</p>
+                    <p class="text-xs text-slate-400 mt-2">~0.95 ETH on Base</p>
+                    <button class="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg smooth-transition text-sm font-semibold">
+                        Withdraw
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto pb-32 md:pb-20">
+            <!-- Hero Section -->
+            <section class="px-4 sm:px-6 lg:px-8 py-12 md:py-20 bg-gradient-to-b from-transparent via-transparent to-slate-900/50">
+                <div class="max-w-4xl mx-auto text-center">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+                        <span class="gradient-text">Stream. Earn. Donate.</span>
+                    </h2>
+                    <p class="text-lg text-slate-300 mb-6">
+                        Creators earn <span class="text-cyan-400 font-bold">$AUX tokens per stream</span>. Listeners donate directly to their favorite artists. Built on Base.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                        <button class="bg-gradient-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 text-slate-900 font-bold py-3 px-8 rounded-lg smooth-transition btn-glow active:scale-95 w-full sm:w-auto">
+                            Start Streaming
+                        </button>
+                        <button class="border-2 border-slate-400 text-slate-300 hover:border-slate-200 hover:text-slate-100 font-bold py-3 px-8 rounded-lg smooth-transition w-full sm:w-auto">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Music Dashboard -->
+            <section class="px-4 sm:px-6 lg:px-8 py-12">
+                <div class="max-w-5xl mx-auto">
+                    <div class="mb-8">
+                        <h3 class="text-2xl md:text-3xl font-bold text-white mb-2">🎵 Featured Tracks</h3>
+                        <p class="text-slate-400">Discover and support amazing creators</p>
+                    </div>
+
+                    <!-- Songs List -->
+                    <div class="space-y-3">
+                        <!-- Song Item 1 -->
+                        <div class="song-row bg-slate-800 bg-opacity-40 hover:bg-opacity-60 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 cursor-pointer">
+                            <div class="flex items-center gap-4 w-full sm:flex-1">
+                                <!-- Album Cover -->
+                                <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex-shrink-0 flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-music text-white text-2xl"></i>
+                                </div>
+
+                                <!-- Song Info -->
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-white font-bold truncate">Electric Dreams</h4>
+                                    <p class="text-sm text-slate-400 truncate">by Luna Echo</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="inline-block bg-blue-600 bg-opacity-30 text-blue-300 text-xs font-semibold px-2 py-1 rounded">0.1 $AUX</span>
+                                        <span class="text-xs text-slate-500">per stream</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex gap-2 w-full sm:w-auto">
+                                <button class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold playing-animation">
+                                    <i class="fas fa-play"></i>
+                                    <span>Play</span>
+                                </button>
+                                <button class="flex-1 sm:flex-none bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                    <i class="fas fa-heart"></i>
+                                    <span>Tip</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Song Item 2 -->
+                        <div class="song-row bg-slate-800 bg-opacity-40 hover:bg-opacity-60 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 cursor-pointer">
+                            <div class="flex items-center gap-4 w-full sm:flex-1">
+                                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-lg flex-shrink-0 flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-music text-white text-2xl"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-white font-bold truncate">Synthwave Sunset</h4>
+                                    <p class="text-sm text-slate-400 truncate">by Alex Nova</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="inline-block bg-blue-600 bg-opacity-30 text-blue-300 text-xs font-semibold px-2 py-1 rounded">0.15 $AUX</span>
+                                        <span class="text-xs text-slate-500">per stream</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-2 w-full sm:w-auto">
+                                <button class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                    <i class="fas fa-play"></i>
+                                    <span>Play</span>
+                                </button>
+                                <button class="flex-1 sm:flex-none bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                    <i class="fas fa-heart"></i>
+                                    <span>Tip</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Song Item 3 -->
+                        <div class="song-row bg-slate-800 bg-opacity-40 hover:bg-opacity-60 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 cursor-pointer">
+                            <div class="flex items-center gap-4 w-full sm:flex-1">
+                                <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex-shrink-0 flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-music text-white text-2xl"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-white font-bold truncate">Cosmic Journey</h4>
+                                    <p class="text-sm text-slate-400 truncate">by Stellar Beats</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="inline-block bg-blue-600 bg-opacity-30 text-blue-300 text-xs font-semibold px-2 py-1 rounded">0.12 $AUX</span>
+                                        <span class="text-xs text-slate-500">per stream</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-2 w-full sm:w-auto">
+                                <button class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                    <i class="fas fa-play"></i>
+                                    <span>Play</span>
+                                </button>
+                                <button class="flex-1 sm:flex-none bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                    <i class="fas fa-heart"></i>
+                                    <span>Tip</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Song Item 4 -->
+                        <div class="song-row bg-slate-800 bg-opacity-40 hover:bg-opacity-60 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 cursor-pointer">
+                            <div class="flex items-center gap-4 w-full sm:flex-1">
+                                <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex-shrink-0 flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-music text-white text-2xl"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-white font-bold truncate">Midnight Vibes</h4>
+                                    <p class="text-sm text-slate-400 truncate">by DJ Phoenix</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="inline-block bg-blue-600 bg-opacity-30 text-blue-300 text-xs font-semibold px-2 py-1 rounded">0.08 $AUX</span>
+                                        <span class="text-xs text-slate-500">per stream</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-2 w-full sm:w-auto">
+                                <button class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                    <i class="fas fa-play"></i>
+                                    <span>Play</span>
+                                </button>
+                                <button class="flex-1 sm:flex-none bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                    <i class="fas fa-heart"></i>
+                                    <span>Tip</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Song Item 5 -->
+                        <div class="song-row bg-slate-800 bg-opacity-40 hover:bg-opacity-60 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 cursor-pointer">
+                            <div class="flex items-center gap-4 w-full sm:flex-1">
+                                <div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex-shrink-0 flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-music text-white text-2xl"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-white font-bold truncate">Neon Pulse</h4>
+                                    <p class="text-sm text-slate-400 truncate">by Cyber Sonic</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="inline-block bg-blue-600 bg-opacity-30 text-blue-300 text-xs font-semibold px-2 py-1 rounded">0.11 $AUX</span>
+                                        <span class="text-xs text-slate-500">per stream</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-2 w-full sm:w-auto">
+                                <button class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                    <i class="fas fa-play"></i>
+                                    <span>Play</span>
+                                </button>
+                                <button class="flex-1 sm:flex-none bg-pink-600 hover:bg-pink-700 text-white py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2 font-semibold">
+                                    <i class="fas fa-heart"></i>
+                                    <span>Tip</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Bottom Audio Player Bar -->
+    <div id="player" class="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-slate-900 via-slate-800 to-slate-800 border-t border-slate-700 backdrop-blur-lg p-4 hidden player-active" style="display: none;">
+        <div class="max-w-7xl mx-auto">
+            <!-- Now Playing Info (Responsive) -->
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex-shrink-0 flex items-center justify-center hidden sm:flex">
+                    <i class="fas fa-music text-white text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-white font-bold text-sm truncate">Electric Dreams</p>
+                    <p class="text-slate-400 text-xs truncate">by Luna Echo</p>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mb-3">
+                <input type="range" min="0" max="100" value="35" class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                <div class="flex justify-between text-xs text-slate-400 mt-1">
+                    <span>1:24</span>
+                    <span>4:02</span>
+                </div>
+            </div>
+
+            <!-- Player Controls -->
+            <div class="flex items-center justify-center gap-4">
+                <button class="text-slate-400 hover:text-slate-200 smooth-transition">
+                    <i class="fas fa-shuffle text-lg"></i>
+                </button>
+                <button class="text-slate-400 hover:text-slate-200 smooth-transition">
+                    <i class="fas fa-step-backward text-lg"></i>
+                </button>
+                <button class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-full smooth-transition flex items-center gap-2 font-bold">
+                    <i class="fas fa-pause text-lg"></i>
+                    <span class="hidden sm:inline">Pause</span>
+                </button>
+                <button class="text-slate-400 hover:text-slate-200 smooth-transition">
+                    <i class="fas fa-step-forward text-lg"></i>
+                </button>
+                <button class="text-slate-400 hover:text-slate-200 smooth-transition">
+                    <i class="fas fa-redo text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Analytics Footer (Visible only on small screens) -->
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 p-4 pointer-events-none">
+        <div class="h-24"></div>
+    </div>
+
+    <!-- Footer Spacer for Player Bar -->
+    <div class="h-32"></div>
+
+    <script>
+        // Simple player functionality
+        document.querySelectorAll('.playing-animation').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const player = document.getElementById('player');
+                player.style.display = 'block';
+                
+                // Update now playing info
+                const songRow = this.closest('.song-row');
+                const title = songRow.querySelector('h4').textContent;
+                const artist = songRow.querySelector('.text-slate-400:nth-of-type(1)').textContent;
+                
+                document.querySelector('#player .text-white.font-bold').textContent = title;
+                document.querySelector('#player .text-slate-400:nth-of-type(1)').textContent = artist;
+                
+                // Change button state
+                this.classList.remove('playing-animation');
+                this.innerHTML = '<i class="fas fa-pause"></i><span>Pause</span>';
+            });
+        });
+
+        // Play button functionality for other songs
+        document.querySelectorAll('button:has(i.fa-play)').forEach((button, index) => {
+            if (index > 0) {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const player = document.getElementById('player');
+                    player.style.display = 'block';
+                    
+                    const songRow = this.closest('.song-row');
+                    const title = songRow.querySelector('h4').textContent;
+                    const artist = songRow.querySelector('.text-slate-400:nth-of-type(1)').textContent;
+                    
+                    document.querySelector('#player .text-white.font-bold').textContent = title;
+                    document.querySelector('#player .text-slate-400:nth-of-type(1)').textContent = artist;
+                    
+                    this.classList.add('bg-opacity-80');
+                    this.innerHTML = '<i class="fas fa-pause"></i><span>Pause</span>';
+                });
+            }
+        });
+
+        // Tip/Donate button functionality
+        document.querySelectorAll('button:has(i.fa-heart)').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const songRow = this.closest('.song-row');
+                const artist = songRow.querySelector('.text-slate-400:nth-of-type(1)').textContent;
+                alert(`Opening donation modal for ${artist}...\n\nIn a real app, this would open a Web3 donation interface!`);
+            });
+        });
+    </script>
+</body>
+</html>
